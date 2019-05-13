@@ -15,6 +15,7 @@ class Attr extends Base
         foreach ($Attr as $key => $value) {
             $result[] =[
                 'attrid'=>$value['id'],
+                'attrtype'=>$value['attr_type'],
                 'attrname'=>$value['attr_name'],
                 'pic'=>$value['pic'],
             ];

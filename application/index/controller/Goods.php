@@ -60,7 +60,7 @@ class Goods extends Controller
             $error = 2;
             $msg = "未查找到相关物品";
         }else{
-            $endgoods = $goodobj->formatGood($goodinfo,"detail");
+            $endgoods = $goodobj->formatGood($goodinfo);
             $data['info']=$endgoods;
         }
         
@@ -126,21 +126,21 @@ class Goods extends Controller
         //判断是否重复
         $cartobj = new CartModel;
         $cartlists = $cartobj->selectInfo('goodsid',$goodsid);
+        $result = false;
         if(!empty($cartlists)){
             foreach ($cartlists as $key => $value) {
                 if ($value['attrid']==$attrid) {
                     $count = $value['count'] +$count;
                     $result = $cartobj->updateField('id',$value['id'],'count',$count);
-                }
-
-                if (!$result) {
-                    $error = 7;
-                    $msg ='增加失败';
+                    if (!$result) {
+                        $error = 7;
+                        $msg ='增加失败';
+                        $result = sendJson($error,$msg,$data);
+                        return $result;die();
+                    }
                     $result = sendJson($error,$msg,$data);
                     return $result;die();
                 }
-                $result = sendJson($error,$msg,$data);
-                return $result;die();
             }
         }
         $endcart=[
@@ -204,9 +204,10 @@ class Goods extends Controller
             $attrinfo  = $attrobj-> getInfo('id',$value['attrid']);
             $cart[]=[
                 'name' => $goodsname,
-                'color'=> $attrinfo['attr_name'],
                 'price'=> $goodsinfo['price']/100,
                 'count'=> $value['count'],
+                'attrtype'=>$attrinfo['attr_type'],
+                'attrname'=> $attrinfo['attr_name'],
             ];
         }
         $data['cart'] =$cart;
