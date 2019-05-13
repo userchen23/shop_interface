@@ -1,0 +1,39 @@
+{include file="public/header" /}
+<div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+    <h1 class="page-header">新增物品</h1>
+    <div class="table-responsive">
+        <form action="{:url('goods/save')}" method="post" enctype="multipart/form-data">
+            <div class="form-group">
+                商品名：<input type="text" name="name"><br>
+                简介 ： <input type="text" name="pro"><br>
+                价格 ： <input type="text" name="price"><br>
+                图片 ： <input type="file" name="img" /> <br>
+            </div>
+
+            <div class="checkbox">
+                {volist name="tlists" id='vt'}
+                <label>
+                    <input name="tag[]" type="checkbox" value="{$vt.id}">{$vt.name}
+                </label>
+              {/volist}
+            </div>
+
+            <div>
+                <!-- 加载编辑器的容器 -->
+                <script id="container" name="content" type="text/plain"></script>
+                <!-- 配置文件 -->
+                <script type="text/javascript" src="/static/ueditor/ueditor.config.js"></script>
+                <!-- 编辑器源码文件 -->
+                <script type="text/javascript" src="/static/ueditor/ueditor.all.js"></script>
+                <!-- 实例化编辑器 -->
+                <script type="text/javascript">
+                    var ue = UE.getEditor('container');
+                </script>
+            </div>
+            <input type="submit" name="" value="上传goods" class="btn btn-default">
+
+        </form>
+    </div>
+</div>
+
+{include file="public/footer" /}

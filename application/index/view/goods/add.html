@@ -1,0 +1,29 @@
+{include file="public/header" /}
+<div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+    <h1 class="page-header">新增物品</h1>
+    <div class="table-responsive">
+        <form action="{:url('gooods/save')}" method="post" enctype="multipart/form-data">
+
+            <div  class="form-group">
+                <label for="exampleInputEmail1">标签：</label>
+                    <select class="form-control" name='cid'>
+                    <option value="0">请选择</option>
+                        {volist name="tlists" id='vt'}
+                        <option value='{$vt.id}'>|----{$vt.cname}</option>
+                        {/volist}
+                    </select>
+            </div>
+            <div>{:captcha_img()}
+                <input type="text" name="code">
+            </div>
+            <div  class="form-group">
+                <label for="exampleInputFile">简介</label>    
+                <textarea class="form-control" rows="3" name="pro"></textarea>
+            </div>
+            <input type="file" name="img" /> <br>
+            <input type="submit" name="" value="物品" class="btn btn-default">
+        </form>
+    </div>
+</div>
+
+{include file="public/footer" /}

@@ -1,0 +1,51 @@
+{include file="public/header" /}
+<div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+    <h1 class="page-header">留言板</h1>
+  <div class="table-responsive">
+<div>
+    <a  class="btn btn-default" href="{:url('message/add')}">新增</a>
+</div>
+
+
+<div><img src="{:captcha_src()}" alt="captcha" /></div>
+
+
+<table  class="table table-striped"> 
+    <tr>
+        <td>id</td>
+        <td>user_id</td>
+        <td>classify</td>
+        <td>name</td>
+        <td>content</td>
+        <td>img</td>
+        <td>handle</td>
+    </tr>
+ 
+    <tr>
+        {volist name="mlist" id="vo"}
+        <td>{$vo.id}</td>
+        <td>{$vo.userid}</td>
+        <td>{$vo.cname}</td>
+        <td>{$vo.username}</td>
+        <td>{$vo.content}</td>
+        <td>{if condition="$vo['img'] neq ''"}
+                <img src="/thinkPHP5/public/{$vo.img}" width="100">
+            {else /} 无图片
+            {/if}</td>
+
+        
+        <td>
+            <a href="{:url('message/update')}?cid={$vo.cid}&id={$vo.id}&userid={$vo.userid}">修改</a>
+            <a href="{:url('message/delete')}?id={$vo.id}&userid={$vo.userid}">删除</a>
+        </td>
+    </tr>
+    {/volist}
+    
+
+</table>
+
+
+  </div>
+</div>
+
+{include file="public/footer" /}
