@@ -14,7 +14,7 @@ class Redis extends Model
             Cache::clear($key,NULL);
         }
         $value=serialize($value);
-        $result=Cache::set($key,$value,20); 
+        $result=Cache::set($key,$value,10); 
         return $result;
     }
 

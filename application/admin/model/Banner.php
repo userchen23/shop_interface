@@ -14,7 +14,7 @@ class Banner extends Base
         $endbanner=[];
         foreach ($bannerlist as $key => $value) {
             $tmp=[
-                'img'=>$value['img'],
+                'img'=>$value['img'].'?v1',
                 'url'=>$value['url'],
             ];
             $endbanner[] = $tmp;

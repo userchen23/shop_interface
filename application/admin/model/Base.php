@@ -1,7 +1,7 @@
 <?php
 namespace app\admin\model;
 
-use \think\Db;
+use \amdin\Db;
 use \think\Model;
 use \think\Collection;
 use \app\admin\model\Redis;
@@ -10,16 +10,35 @@ use \think\File;
  * 
  */
 class Base extends Model
-{
+{   
+
     public function add($data){
         $result = $this->insert($data);
 
         return $result;
     }
 
-    public function getInfo($id){
-        $info = $this->where('id',$id)->find();
-        $info = $info->toArray();
+    public function addGetId($data){
+        $result = $this->insertGetId($data);
+        return $result;
+    }
+    public function updateField($field1,$info,$field2,$data){
+        $result=$this->where($field1,$info)->setField($field2, $data);
+        return $result;
+    }
+
+    public function getInfo($field,$value){
+        $info = $this->where($field,$value)->find();
+        if ($info) {
+            $info = $info->toArray();
+        }
+        return $info;
+    }
+    public function selectInfo($field,$value){
+        $info =$this->where($field,$value)->select();
+        if ($info) {
+            $info = lists_to_array($info);
+        }
         return $info;
     }
 
@@ -29,7 +48,11 @@ class Base extends Model
         $value=$redis_obj->getRedis($table_Lists);
         if (empty($value)) {
             $lists = $this->select();
-            $result =lists_to_array($lists);
+            if ($lists) {
+                $result =lists_to_array($lists);
+            }else{
+                $result = 0;
+            }
             $redis_obj->setRedis($table_Lists,$result);
         }else{
             $result=$value;
@@ -49,8 +72,8 @@ class Base extends Model
         return $result;
     }
 
-    public function dodelete($id){
-        $result = $this->where('id',$id)->delete();
+    public function dodelete($field,$value){
+        $result = $this->where($field,$value)->delete();
         return $result;
     }
 }

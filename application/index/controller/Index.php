@@ -1,15 +1,15 @@
 <?php
 namespace app\index\controller;
 
-use \app\index\controller\Base;
+use \think\Controller;
 
 /**
  * 
  */
-class Index extends Base
+class Index extends Controller
 {
     
     public function index(){
-
+        echo "string";
     }
 }

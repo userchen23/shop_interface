@@ -19,6 +19,7 @@ class Redis extends Model
     }
 
     public function getRedis($key){
+        $result = [];
         $value=Cache::get($key);
         if ($value) {
             $result=unserialize($value);
@@ -29,18 +30,33 @@ class Redis extends Model
         return $result;
     }
 
-    public function set_token($info){
+    public function setToken($info){
         $name = $info['name'];
         $id   = $info['id'];
         $token = md5("crj".md5($name.$id));
-        setcookie("crj_token",$token);
-        $result = $redis->hmset($id, array('name'=>$name, 'id'=>$id));
-
         return $token;
     }
-    public function checkToken(){
-        $redis = new \Redis(); 
-        $redis->connect('127.0.0.1', '6379');
-
+    public function getToken($data){
+        $result = [];
+        $name = $info['name'];
+        $id   = $info['id'];
+        $token = self::setToken($data);
+        $data  =[
+            'name'=>$data['name'],
+            'id'=>$data['id'],
+        ];
+        $result = $redis->hmset($token,$data);
+        return $token;
     }
+    public function TokenClear($token){
+        if (Cache::get($token)) {
+            Cache::clear($token,NULL);
+        }
+    }
+    // public function checkToken(){
+    //     $redis = new \Redis(); 
+    //     $redis->connect('127.0.0.1', '6379');
+
+    // }
+
 }

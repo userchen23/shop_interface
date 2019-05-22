@@ -1,0 +1,26 @@
+{include file="public/header" /}
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-sm-3 col-md-2 sidebar">
+      <ul class="nav nav-sidebar">
+        <li><a href="{:url('goods/goodsLists')}">商品管理 </a></li>
+        <li><a href="{:url('banner/bannerLists')}">轮播图管理</a></li>
+        <li><a href="{:url('user/userlists')}">用户管理</a></li>
+        <li class="active"><a href="{:url('attr/attrLists')}">属性管理</a></li>
+        <li><a href="http://v3.bootcss.com/examples/dashboard/#">模板</a></li>
+      </ul>      
+    </div>
+<div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+    <h1 class="page-header">新增属性</h1>
+    <div class="table-responsive">
+        <form action="{:url('attr/save')}" method="post" enctype="multipart/form-data">
+            <div  class="form-group">
+                <input type="text" name="url">
+            </div>
+            <input type="file" name="img" /> <br>
+            <input type="submit" name="" value="物品" class="btn btn-default">
+        </form>
+    </div>
+</div>
+
+{include file="public/footer" /}

@@ -46,33 +46,13 @@
         </div>
         <div id="navbar" class="navbar-collapse collapse">
           <ul class="nav navbar-nav navbar-right">
-          <?php  
-          if(!session('name')){ ?>
-           <li><a href="{:url('user/login')}">登录</a></li>
-            <li><a href="{:url('user/register')}">注册</a></li>
-          <?php  }else{ ?>
-          
-          <li><a href="#">你好 <?php echo session('name'); ?></a></li>
-          <li><a href="{:url('user/loginout')}">退出登录</a></li>
-          <?php } ?>
 
-            
           </ul>
           <form class="navbar-form navbar-right">
-            <input type="text" class="form-control" placeholder="Search...">
+            <input type="text" class="form-control" placeholder="Search..." hidden="hidden">
           </form>
         </div>
       </div>
     </nav>
 
-    <div class="container-fluid">
-      <div class="row">
-        <div class="col-sm-3 col-md-2 sidebar">
-          <ul class="nav nav-sidebar">
-            <li class="active"><a href="{:url('')}">会员管理 </a></li>
-            <li><a href="{:url('')}">分类管理</a></li>
-            <li><a href="">留言管理</li>
-            <li><a href="http://v3.bootcss.com/examples/dashboard/#">Export</a></li>
-          </ul>
-          
-        </div>
+

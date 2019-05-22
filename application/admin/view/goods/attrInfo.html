@@ -1,0 +1,51 @@
+{include file="public/header" /}
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-sm-3 col-md-2 sidebar">
+      <ul class="nav nav-sidebar">
+        <li><a href="{:url('goods/goodsLists')}">商品管理 </a></li>
+        <li><a href="{:url('banner/bannerLists')}">轮播图管理</a></li>
+        <li><a href="{:url('user/userlists')}">用户管理</a></li>
+        <li><a href="{:url('attr/attrLists')}">属性管理</a></li>
+        <li><a href="http://v3.bootcss.com/examples/dashboard/#">模板</a></li>
+      </ul>
+      
+    </div>
+<div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+    <h1 class="page-header">商品属性</h1>
+  <div class="table-responsive">
+
+<a href="{:url('goods/goodsLists')}" class="btn btn-default">返回列表</a><br>
+
+<form action="{:url('goods/addAttr')}" method="post" enctype="multipart/form-data">
+    <div class="form-group">
+        <table  class="table table-striped"> 
+            <tr>
+                <td>id</td>
+                <td>attrtype</td>
+                <td>attrname</td>
+                <td>pic</td>
+            </tr>
+            {volist name="attrlists" id="vo"}
+            <tr>
+                <td>{$vo.id}</td>
+                <td>{$vo.attr_type}</td>
+                <td>{$vo.attr_name}</td>   
+                <td>{if condition="$vo['pic'] neq ''"}
+                        <img src="{$vo.pic}" width="50">
+                    {else /} 无图片
+                    {/if}</td>
+            </tr>
+            <input type="text" name="attr_arr[]" value={$vo.id} hidden="hidden"><br>
+            {/volist}
+        </table>
+        <input type="text" name="goods_id" value={$goodsid} hidden="hidden"><br>
+    </div>
+    <input type="submit" name="" value="添加商品属性" class="btn btn-default">
+</form>
+
+
+</div>
+</div>
+
+{include file="public/footer" /}

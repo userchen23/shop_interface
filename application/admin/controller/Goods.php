@@ -3,115 +3,189 @@ namespace app\admin\controller;
 
 use \think\Controller;
 use app\admin\model\Goods as GoodsModel;
-use app\admin\model\Tag;
+use app\admin\model\Tag as TagModel;
+use app\admin\model\Banner;
+use app\admin\model\Attr as AttrModel;
 /**
  * 
  */
 class Goods extends Controller
 {
     public function goodsLists(){
-        $goodobj = new GoodsModel;
-        $data = $goodobj->getLists();
-        $this->assign('goodslists');
+        $goodsobj = new GoodsModel;
+        $goodslists=$goodsobj->getLists();
+        $this->assign('goodslists',$goodslists);
         return $this->fetch('goodslists');
-        var_dump($data);die();
+    }
+    public function addAttr(){
+        $post_data = input('post.');
+        if (empty($post_data['attr_arr'])) {
+            $attr_str = '';
+        }else{
+            $attr_str = implode(',', $post_data['attr_arr']);
+        }
+        $goods_id = $post_data['goods_id'];
+        $this->assign('goods_id',$goods_id);
+        $this->assign('attr_str',$attr_str);
+        return $this->fetch('addAttr');
+    }
+    public function attrInfo($goodsid){
+        $attrobj = new AttrModel;
+        $attrlists = $attrobj->selectInfo('goodsid',$goodsid);
+        $this->assign('attrlists',$attrlists);
+        $this->assign('goodsid',$goodsid);
+        return $this->fetch('attrInfo');
+
+    }
+
+    public function attrSave(){
+        $post_data = input('post.');
+        $goods_id   = !empty($post_data['goods_id'])?$post_data['goods_id']:'';
+        $attr_type = !empty($post_data['attr_type'])?$post_data['attr_type']:'';
+        $attr_name = !empty($post_data['attr_name'])?$post_data['attr_name']:'';
+        if ($img=\tool\FileHandle::uploadImg('pic','attr')) {
+            $pic=$img['saveName']?$img['saveName']:'';
+        }else{
+            $pic = '';
+        }
+        $data = [
+            'attr_type'=> $attr_type,
+            'attr_name'=> $attr_name,
+            'pic'      => $pic,
+            'goodsid'  => $goods_id,
+        ];
+        $attr_obj = new AttrModel;
+        $result1  = $attr_obj->addGetId($data);
+        if (!$result1) {
+            echo "attradd error";die();
+        }
+        if (!empty($post_data['attr_str'])) {
+            $attr_str=$post_data['attr_str'].','.$result1;
+        }else{
+            $attr_str=$result1;
+        }
+        $goods_obj= new GoodsModel;
+        $result2  = $goods_obj->updateField('id',$goods_id,'attrid',$attr_str);
+        if (!$result2) {
+            $this->error();die();
+        }
+        $this->success('成功','goods/goodslists');die();
     }
     public function add(){
-        $tagobj = new Tag;
-        $data = $tagobj->getLists();
-        $this->assign('tlists',$data);
+        $tagobj = new TagModel;
+        $taglists=$tagobj->getLists();
+        $this->assign('taglists',$taglists);
         return $this->fetch('add');
     }
     public function save(){
-        if (request()->isPost()) {
-            $data=input('post.');
-            if ($data) {
-                $time = time();
-                //$content = htmlspecialchars($data['content'], ENT_QUOTES);
-                $name =$data['name']?$data['name']:'';
-                $pro =$data['pro']?$data['pro']:'';
-                $price =$data['price']?$data['price']:1;
-                $tag =$data['tag']?$data['tag']:'';
-                if (isset($data['content'])) {
-                    $content =$data['content']?$data['content']:'';
-                }else{
-                    $content = '';
-                }
-                
-                if ($tag) {
-                    $tag=implode(',', $tag);
-                }
-                $end=[
-                    'name'=>$name,
-                    'pro'=>$pro,
-                    'price'=>$price,
-                    'tag'=>$tag,
-                    'content'=>$content,
-                    'create_time'=>$time,
-                    'update_time'=>$time,
-                ];
-                if ($img=\tool\FileHandle::upload()) {
-                    $end['img']=$img['saveName']?$img['saveName']:'';
-                }
-
-                $goodobj = new GoodsModel;
-                $result = $goodobj->add($end);
-
-                if ($result) {
-                    $this->success('添加成功');
-                    die();
-                }else{
-                    $this->error('添加失败');
-                    die();
-                }
-
-            }else{
-                $this->error('未获取到数据');
-            }
+        $data=input('post.');
+        if ($data) {
+            $this->error('未获取到数据');
         }
-    }
-    public function reg(){
-            if (request()->isPost()) {
-            $data=input('post.');
-            if ($data) {
-                $time = time();
-                //$content = htmlspecialchars($data['content'], ENT_QUOTES);
-                $username =$data['name']?$data['name']:'';
-                $phone =$data['phone']?$data['phone']:'';
-                $password =$data['password']?$data['password']:1;
-                
-                if ($tag) {
-                    $tag=implode(',', $tag);
-                }
-                $end=[
-                    'name'=>$name,
-                    'pro'=>$pro,
-                    'price'=>$price,
-                    'tag'=>$tag,
-                    'content'=>$content,
-                    'create_time'=>$time,
-                    'update_time'=>$time,
-                ];
-                if ($img=\tool\FileHandle::upload()) {
-                    $end['img']=$img['saveName']?$img['saveName']:'';
-                }
+        $time = time();
+        //$content = htmlspecialchars($data['content'], ENT_QUOTES);
+        $name  =!empty($data['name'])?$data['name']:'';
+        $pro   =!empty($data['pro'])?$data['pro']:'';
+        $price =!empty($data['price'])?$data['price']:'';
+        $tag   =!empty($data['tag'])?$data['tag']:'';
+        if (isset($data['content'])) {
+            $content =$data['content']?$data['content']:'';
+        }else{
+            $content = '';
+        }
+        
+        if ($tag) {
+            $tag=implode(',', $tag);
+        }
 
-                $goodobj = new GoodsModel;
-                $result = $goodobj->add($end);
+        $end=[
+            'name'=>$name,
+            'pro'=>$pro,
+            'price'=>$price*100,
+            'tag'=>$tag,
+            'content'=>$content,
+            'create_time'=>$time,
+            'update_time'=>$time,
+        ];
+        if ($img=\tool\FileHandle::uploadImg('img','goods')) {
+            $end['img']=$img['saveName']?$img['saveName']:'';
+        }
 
-                if ($result) {
-                    $this->success('添加成功');
-                    die();
-                }else{
-                    $this->error('添加失败');
-                    die();
-                }
-
-            }else{
-                $this->error('未获取到数据');
-            }
+        $goodobj = new GoodsModel;
+        $result  = $goodobj->add($end);
+        
+        if ($result) {
+            $this->success('添加成功');
+            die();
+        }else{
+            $this->error('添加失败');
+            die();
         }
     }
 
+    public function delete(){
+        if (empty($_GET['id'])) {
+            $this->error('无id传入');
+        }
+        $id         = $_GET['id'];
+        $goods_obj = new GoodsModel;
+        $result     = $goods_obj->dodelete('id',$id);
+        if ($result) {
+            $this->success('删除成功','goodsLists');
+            die();
+        }else{
+            $this->error('删除失败','goodsLists');
+            die();
+        }
+    }
+
+    public function update(){
+        if (empty($_GET['id'])) {
+            $this->error('无id传入');
+        }
+        $id         = $_GET['id'];
+        $goods_obj  = new GoodsModel;
+        $result     = $goods_obj->getInfo('id',$id);
+        $name       = !empty($result['name'])?$result['name']:'';
+        $pro        = !empty($result['pro'])?$result['pro']:'';
+        $price      = !empty($result['price'])?$result['price']:'';
+
+        $goods_info = [
+            'id'    => $id,
+            'name'  => $name,
+            'pro'   => $pro,
+            'price' => $price/100,
+        ];
+
+        $this->assign('goods_info',$goods_info);
+        return $this->fetch('update');die();
+    }
+
+    public function doUpdate(){
+        $time = time();
+
+        $post_data = input('post.');
+        $id  = $post_data['id'];
+        $end = [];
+        $end = [
+            'name'  => $post_data,
+            'pro'   => $post_data['pro'],
+            'price' => $post_data['price'],
+        ];
+        if ($img=\tool\FileHandle::uploadImg('img','goods')) {
+            $end['img']=$img['saveName']?$img['saveName']:'';
+        }
+        $goods_obj = new GoodsModel;
+        $result     = $goods_obj->doupdate($id,$end);
+
+        if ($result) {
+            $this->success('添加成功','goodsLists');
+            die();
+        }else{
+            $this->error('添加失败','goodsLists');
+            die();
+        }
+    }
     
 }
+

@@ -38,19 +38,12 @@ class Base extends Model
     }
 
     public function getLists(){
-        $table_Lists="crj_".$this->table."_Lists";
-        $redis_obj= new Redis;
-        $value=$redis_obj->getRedis($table_Lists);
-        if (empty($value)) {
-            $lists = $this->select();
-            if ($lists) {
-                $result =lists_to_array($lists);
-            }else{
-                $result = 0;
-            }
-            $redis_obj->setRedis($table_Lists,$result);
+
+        $lists = $this->select();
+        if ($lists) {
+            $result =lists_to_array($lists);
         }else{
-            $result=$value;
+            $result = false;
         }
         
         return $result;

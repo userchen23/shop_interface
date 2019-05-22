@@ -1,0 +1,52 @@
+{include file="public/header" /}
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-sm-3 col-md-2 sidebar">
+      <ul class="nav nav-sidebar">
+        <li><a href="{:url('goods/goodsLists')}">商品管理 </a></li>
+        <li class="active"><a href="{:url('banner/bannerLists')}">轮播图管理</a></li>
+        <li><a href="{:url('user/userlists')}">用户管理</a></li>
+        <li><a href="{:url('attr/attrLists')}">属性管理</a></li>
+        <li><a href="http://v3.bootcss.com/examples/dashboard/#">模板</a></li>
+      </ul>
+      
+    </div>
+<div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+    <h1 class="page-header">轮播图管理</h1>
+  <div class="table-responsive">
+<div>
+    <a  class="btn btn-default" href="{:url('banner/add')}">新增</a>
+</div>
+
+
+<table  class="table table-striped"> 
+    <tr>
+        <td>id</td>
+        <td>url</td>
+        <td>img</td>
+        <td>handle</td>
+    </tr>
+    {volist name="banner_lists" id="vo"}
+    <tr>
+        <td>{$vo.id}</td>
+        <td><a href="{$vo.url}">{$vo.url} </a> </td>  
+        <td>{if condition="$vo['img'] neq ''"}
+                <img src="{$vo.img}" width="50">
+            {else /} 无图片
+            {/if}
+        </td>
+        <td>
+            <a  class="btn btn-default" href="{:url('banner/update')}?&id={$vo.id}">修改</a><br>
+            <a  class="btn btn-default" href="{:url('banner/delete')}?id={$vo.id}">删除</a>
+        </td>
+    </tr>
+    {/volist}
+    
+
+</table>
+
+
+  </div>
+</div>
+
+{include file="public/footer" /}

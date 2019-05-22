@@ -26,21 +26,12 @@ function lists_to_array($lists){
     return $result;
 }
 
-function response($error=0,$msg='成功',$data=[]){
+function echoJson($error = 0, $msg = '成功', $data = []){
     $result = [
         'error'=>$error,
         'msg'=>$msg,
         'data'=>$data,
     ];
-    return $result;
-}
-
-function sendJson($error = 0, $msg = '成功', $data = []){
-    $result = [
-        'error'=>$error,
-        'msg'=>$msg,
-        'data'=>$data,
-    ];
-    return json_encode($result);
+    echo json_encode($result);die();
 }
 

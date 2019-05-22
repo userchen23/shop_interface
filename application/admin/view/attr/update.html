@@ -1,0 +1,30 @@
+{include file="public/header" /}
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-sm-3 col-md-2 sidebar">
+      <ul class="nav nav-sidebar">
+        <li><a href="{:url('goods/goodsLists')}">商品管理 </a></li>
+        <li><a href="{:url('banner/bannerLists')}">轮播图管理</a></li>
+        <li><a href="{:url('user/userlists')}">用户管理</a></li>
+        <li class="active"><a href="{:url('attr/attrLists')}">属性管理</a></li>
+        <li><a href="http://v3.bootcss.com/examples/dashboard/#">模板</a></li>
+      </ul>
+      
+    </div>
+<div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+    <h1 class="page-header">修改属性</h1>
+    <div class="table-responsive">
+        <form action="{:url('attr/doUpdate')}" method="post" enctype="multipart/form-data">
+            <div class="form-group">
+                attr_name：<input type="text" name="attr_name" value="{$attr_name}"><br>
+                <input type="text" name="id" value="{$id}" hidden="hidden">
+                图片 ： <input type="file" name="pic"><br>
+            </div>
+
+            <input type="submit" name="" value="确认修改" class="btn btn-default">
+
+        </form>
+    </div>
+</div>
+
+{include file="public/footer" /}

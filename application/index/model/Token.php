@@ -10,7 +10,7 @@ class Token extends Base
 {
     public $table = "token";
 
-    public function getToken($data){
+    public function getUserToken($data){
         $value = serialize($data);
         $token =self::setToken($data);
         $time = time()+86400*30;
@@ -24,7 +24,7 @@ class Token extends Base
         if ($result) {
             return $token;
         }else{
-            return 0;
+            return false;
         }
     }
 
