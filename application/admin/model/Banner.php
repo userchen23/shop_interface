@@ -10,15 +10,15 @@ class Banner extends Base
 {
     public $table = "banner";
 
-    public function formatBanner($bannerlist){
-        $endbanner=[];
-        foreach ($bannerlist as $key => $value) {
+    public function formatBanner($banner_list){
+        $end_banner=[];
+        foreach ($banner_list as $key => $value) {
             $tmp=[
                 'img'=>$value['img'].'?v1',
                 'url'=>$value['url'],
             ];
-            $endbanner[] = $tmp;
+            $end_banner[] = $tmp;
         }
-        return $endbanner;
+        return $end_banner;
     }
 }

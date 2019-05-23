@@ -12,9 +12,9 @@ use app\admin\model\Attr as AttrModel;
 class Goods extends Controller
 {
     public function goodsLists(){
-        $goodsobj = new GoodsModel;
-        $goodslists=$goodsobj->getLists();
-        $this->assign('goodslists',$goodslists);
+        $goods_obj = new GoodsModel;
+        $goods_lists=$goods_obj->getLists();
+        $this->assign('goods_lists',$goods_lists);
         return $this->fetch('goodslists');
     }
     public function addAttr(){
@@ -29,11 +29,11 @@ class Goods extends Controller
         $this->assign('attr_str',$attr_str);
         return $this->fetch('addAttr');
     }
-    public function attrInfo($goodsid){
-        $attrobj = new AttrModel;
-        $attrlists = $attrobj->selectInfo('goodsid',$goodsid);
-        $this->assign('attrlists',$attrlists);
-        $this->assign('goodsid',$goodsid);
+    public function attrInfo($goods_id){
+        $attr_obj = new AttrModel;
+        $attr_lists = $attr_obj->selectInfo('goods_id',$goods_id);
+        $this->assign('attr_lists',$attr_lists);
+        $this->assign('goods_id',$goods_id);
         return $this->fetch('attrInfo');
 
     }
@@ -44,7 +44,7 @@ class Goods extends Controller
         $attr_type = !empty($post_data['attr_type'])?$post_data['attr_type']:'';
         $attr_name = !empty($post_data['attr_name'])?$post_data['attr_name']:'';
         if ($img=\tool\FileHandle::uploadImg('pic','attr')) {
-            $pic=$img['saveName']?$img['saveName']:'';
+            $pic= "http://shop.com/" . $img['saveName'];
         }else{
             $pic = '';
         }
@@ -52,7 +52,7 @@ class Goods extends Controller
             'attr_type'=> $attr_type,
             'attr_name'=> $attr_name,
             'pic'      => $pic,
-            'goodsid'  => $goods_id,
+            'goods_id'  => $goods_id,
         ];
         $attr_obj = new AttrModel;
         $result1  = $attr_obj->addGetId($data);
@@ -65,21 +65,21 @@ class Goods extends Controller
             $attr_str=$result1;
         }
         $goods_obj= new GoodsModel;
-        $result2  = $goods_obj->updateField('id',$goods_id,'attrid',$attr_str);
+        $result2  = $goods_obj->updateField('id',$goods_id,'attr_id',$attr_str);
         if (!$result2) {
             $this->error();die();
         }
         $this->success('成功','goods/goodslists');die();
     }
     public function add(){
-        $tagobj = new TagModel;
-        $taglists=$tagobj->getLists();
-        $this->assign('taglists',$taglists);
+        $tag_obj = new TagModel;
+        $tag_lists=$tag_obj->getLists();
+        $this->assign('tag_lists',$tag_lists);
         return $this->fetch('add');
     }
     public function save(){
         $data=input('post.');
-        if ($data) {
+        if (empty($data)) {
             $this->error('未获取到数据');
         }
         $time = time();
@@ -89,7 +89,7 @@ class Goods extends Controller
         $price =!empty($data['price'])?$data['price']:'';
         $tag   =!empty($data['tag'])?$data['tag']:'';
         if (isset($data['content'])) {
-            $content =$data['content']?$data['content']:'';
+            $content =!empty($data['content'])?$data['content']:'';
         }else{
             $content = '';
         }
@@ -108,17 +108,17 @@ class Goods extends Controller
             'update_time'=>$time,
         ];
         if ($img=\tool\FileHandle::uploadImg('img','goods')) {
-            $end['img']=$img['saveName']?$img['saveName']:'';
+            $end['img']="http://shop.com/" . $img['saveName'];
         }
 
-        $goodobj = new GoodsModel;
-        $result  = $goodobj->add($end);
+        $goods_obj = new GoodsModel;
+        $result  = $goods_obj->add($end);
         
         if ($result) {
             $this->success('添加成功');
             die();
         }else{
-            $this->error('添加失败');
+            $this->error('添加失败','goodslists');
             die();
         }
     }
@@ -168,21 +168,24 @@ class Goods extends Controller
         $id  = $post_data['id'];
         $end = [];
         $end = [
-            'name'  => $post_data,
+            'name'  => $post_data['name'],
             'pro'   => $post_data['pro'],
-            'price' => $post_data['price'],
-        ];
+            'price' => $post_data['price']*100,
+        ];        
+        if (!empty($post_data['content'])) {
+            $end['content'] =$post_data['content'];
+        }
         if ($img=\tool\FileHandle::uploadImg('img','goods')) {
-            $end['img']=$img['saveName']?$img['saveName']:'';
+            $end['img']="http://shop.com/" . $img['saveName'];
         }
         $goods_obj = new GoodsModel;
         $result     = $goods_obj->doupdate($id,$end);
 
         if ($result) {
-            $this->success('添加成功','goodsLists');
+            $this->success('修改成功','goodsLists');
             die();
         }else{
-            $this->error('添加失败','goodsLists');
+            $this->error('修改失败','goodsLists');
             die();
         }
     }

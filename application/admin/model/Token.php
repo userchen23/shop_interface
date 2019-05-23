@@ -49,8 +49,8 @@ class Token extends Base
         }
         $result = $info;
         $result= unserialize($info['value']);
-        $userobj=new UserModel;
-        $result= $userobj->getinfo('id',$result['id']);
+        $user_obj=new UserModel;
+        $result= $user_obj->getinfo('id',$result['id']);
         return $result;
     }
 

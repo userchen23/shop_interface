@@ -54,10 +54,10 @@ class Attr extends Controller
         $attr_obj = new AttrModel;
         $result     = $attr_obj->dodelete('id',$id);
         if ($result) {
-            $this->success('删除成功','attrLists');
+            $this->success('删除成功');
             die();
         }else{
-            $this->error('删除失败','attrLists');
+            $this->error('删除失败');
             die();
         }
     }
@@ -76,7 +76,7 @@ class Attr extends Controller
 
     public function doUpdate(){
         $data=input('post.');
-        if (!$data) {
+        if (empty($data)) {
             $this->error('未获取到数据');
         }
         //$content = htmlspecialchars($data['content'], ENT_QUOTES);

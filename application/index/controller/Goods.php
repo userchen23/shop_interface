@@ -18,16 +18,16 @@ class Goods extends Controller
         $msg = '成功';
         $data = [];
 
-        $goodsobj = new GoodsModel;
-        $goodslists=$goodsobj->getLists();
-        $endgoods =$goodsobj->changelist($goodslists);
-        $endgoods = $goodsobj->formatGoods($endgoods);
-        $data['goods']=$endgoods;
+        $goods_obj = new GoodsModel;
+        $goods_lists=$goods_obj->getLists();
+        $end_goods =$goods_obj->changelist($goods_lists);
+        $end_goods = $goods_obj->formatGoods($end_goods);
+        $data['goods']=$end_goods;
 
-        $bannerobj = new Banner;
-        $bannerlist = $bannerobj->getLists();
-        $endbanner = $bannerobj->formatBanner($bannerlist);
-        $data['banner']=$endbanner;
+        $banner_obj = new Banner;
+        $banner_lists = $banner_obj->getLists();
+        $end_banner = $banner_obj->formatBanner($banner_lists);
+        $data['banner']=$end_banner;
         echoJson($error,$msg,$data);
     }
 
@@ -40,36 +40,36 @@ class Goods extends Controller
             $msg = "未传递参数ID";
             echoJson($error,$msg,$data);           
         }
-        $goodobj = new GoodsModel;
-        $goodinfo =$goodobj->getinfo('id',$id);
-        $goodinfo =$goodobj->changeinfo($goodinfo);
-        //从goods表获取attrid 
-        $attrstr = $goodinfo['attrid'];
+        $goods_obj = new GoodsModel;
+        $goods_info =$goods_obj->getinfo('id',$id);
+        $goods_info =$goods_obj->changeinfo($goods_info);
+        //从goods表获取attr_id 
+        $attrstr = $goods_info['attr_id'];
         //转换成数组
         if ($attrstr) {
             $attrarr = explode(',', $attrstr);
         }else{
             $attrarr = [];
         }
-        $attrlists = [];
-        $attrobj = new AttrModel;
+        $attr_lists = [];
+        $attr_obj = new AttrModel;
         foreach ($attrarr as $key => $value) {
             if (!empty($value)) {
-            $attrlists[] = $attrobj->getInfo('id',$value); 
+            $attr_lists[] = $attr_obj->getInfo('id',$value); 
             }
         }
-        if ($attrlists) {
-            $endattr = $attrobj->formatAttr($attrlists);
+        if ($attr_lists) {
+            $end_attr = $attr_obj->formatAttr($attr_lists);
         }else{
-            $endattr = [];
+            $end_attr = [];
         }
-        $goodinfo['attr'] = $endattr;
-        if (empty($goodinfo)) {
+        $goods_info['attr'] = $end_attr;
+        if (empty($goods_info)) {
             $error = 2;
             $msg = "未查找到相关物品";
         }else{
-            $endgoods = $goodobj->formatGood($goodinfo);
-            $data['info']=$endgoods;
+            $end_goods = $goods_obj->formatGood($goods_info);
+            $data['info']=$end_goods;
         }
         echoJson($error,$msg,$data);
     }
@@ -84,32 +84,32 @@ class Goods extends Controller
             $msg = '未接受到POST请求';
             echoJson($error,$msg,$data);
         }
-        $postdata = input('post.');
-        if (empty($postdata)) {
+        $post_data = input('post.');
+        if (empty($post_data)) {
             $error = 2;
             $msg = 'data为空';
             echoJson($error,$msg,$data);
         }
-        if (empty($postdata['goods_id'])||empty($postdata['token'])||empty($postdata['count'])) {
+        if (empty($post_data['goods_id'])||empty($post_data['token'])||empty($post_data['count'])) {
             $error = 3;
             $msg = "缺少必要参数";
             echoJson($error,$msg,$data);
         }
 
-        //获取userid
-        $token = $postdata['token'];
-        $tokenobj = new TokenModel;
-        $result = $tokenobj->tokenChecked($token);
+        //获取user_id
+        $token = $post_data['token'];
+        $token_obj = new TokenModel;
+        $result = $token_obj->tokenChecked($token);
         if (!$result) {
             $error = 4;
             $msg = 'token不存在或过期';
             echoJson($error,$msg,$data);
         }
-        $userid = $result['id'];
-        //获取goodsid
-        $goodsid = $postdata['goods_id'];
-        $goodobj = new GoodsModel;
-        $info = $goodobj->getInfo('id',$goodsid);
+        $user_id = $result['id'];
+        //获取goods_id
+        $goods_id = $post_data['goods_id'];
+        $goods_obj = new GoodsModel;
+        $info = $goods_obj->getInfo('id',$goods_id);
         if (!$info) {
             $error = 5;
             $msg = "未找到商品";
@@ -118,49 +118,49 @@ class Goods extends Controller
         //获取price
         $price = $info['price']/100;
         //获取count
-        $count = $postdata['count'];
-        //获取color,size,attrid
-        $color = !empty($postdata['color'])?$postdata['color']:'';
-        $size  = !empty($postdata['size'])?$postdata['size']:'';
-        $attrid= !empty($postdata['attrid'])?$postdata['attrid']:'';
+        $count = $post_data['count'];
+        //获取color,size,attr_id
+        $color = !empty($post_data['color'])?$post_data['color']:'';
+        $size  = !empty($post_data['size'])?$post_data['size']:'';
+        $attr_id= !empty($post_data['attr_id'])?$post_data['attr_id']:'';
         //判断是否重复
-        $cartobj = new CartModel;
-        $cartlists = $cartobj->selectInfo('userid',$userid);
+        $cart_obj = new CartModel;
+        $cart_lists = $cart_obj->selectInfo('user_id',$user_id);
         $result = false;
-        if(!empty($cartlists)){
-            foreach ($cartlists as $key => $value) {
-                if ($value['goodsid']==$goodsid && $value['attrid']==$attrid) {
+        if(!empty($cart_lists)){
+            foreach ($cart_lists as $key => $value) {
+                if ($value['goods_id']==$goods_id && $value['attr_id']==$attr_id) {
                     $count = $value['count'] +$count;
-                    $result = $cartobj->updateField('id',$value['id'],'count',$count);
+                    $result = $cart_obj->updateField('id',$value['id'],'count',$count);
                     if (!$result) {
                         $error = 7;
                         $msg ='增加失败';
                         echoJson($error,$msg,$data);
                     }
-                    $data =$goodobj-> getGoodsLists($userid);
+                    $data =$goods_obj-> getGoodsLists($user_id);
                     echoJson($error,$msg,$data);
                 }
             }
         }
         $endcart=[
-            'goodsid'=> $goodsid,
-            'userid' => $userid,
+            'goods_id'=> $goods_id,
+            'user_id' => $user_id,
             'price'  => $price*100,
             'count'  => $count,
             'color'  => $color,
             'size'   => $size,
-            'attrid' => $attrid,
+            'attr_id' => $attr_id,
         ];
-        $cartobj = new CartModel;
-        $result = $cartobj->add($endcart);
+        $cart_obj = new CartModel;
+        $result = $cart_obj->add($endcart);
         if (!$result) {
             $error = 6;
             $msg ='添加失败';
             echoJson($error,$msg,$data);
         }
-        $result = $cartobj->getLists();
+        $result = $cart_obj->getLists();
 
-        $data = $goodobj-> getGoodsLists($userid);
+        $data = $goods_obj-> getGoodsLists($user_id);
         echoJson($error,$msg,$data);
     }
 
@@ -180,17 +180,17 @@ class Goods extends Controller
             echoJson($error,$msg,$data);
         }
         //判断token,获取用户id
-        $tokenobj = new TokenModel;
-        $result   = $tokenobj->tokenChecked($token);
+        $token_obj = new TokenModel;
+        $result   = $token_obj->tokenChecked($token);
         if (!$result) {
             $error = 4;
             $msg   = 'token不存在或过期';
             echoJson($error,$msg,$data);
         }
-        $userid = $result['id'];
+        $user_id = $result['id'];
 //获取列表，返回数据
-        $goodobj = new GoodsModel;
-        $data = $goodobj-> getGoodsLists($userid);
+        $goods_obj = new GoodsModel;
+        $data = $goods_obj-> getGoodsLists($user_id);
         echoJson($error,$msg,$data);
     }
     
@@ -204,58 +204,57 @@ class Goods extends Controller
             echoJson($error,$msg,$data);
         }
 
-        $postdata = input('post.');
+        $post_data = input('post.');
 
-        if (empty($postdata['goods_id'])||empty($postdata['token'])) {
+        if (empty($post_data['goods_id'])||empty($post_data['token'])) {
             $error = 2;
             $msg = "缺少必要参数";
             echoJson($error,$msg,$data);
         }
 
-        $token =$postdata['token'];
+        $token =$post_data['token'];
         //判断token
-        $tokenobj = new TokenModel;
-        $result = $tokenobj->tokenChecked($token);
+        $token_obj = new TokenModel;
+        $result = $token_obj->tokenChecked($token);
         if (!$result) {
             $error = 3;
             $msg = 'token不存在或过期';
             echoJson($error,$msg,$data);
         }
-        $userid = $result['id']; 
+        $user_id = $result['id']; 
         //post中物品id,属性id,count
-        $goodsid = $postdata['goods_id'];
-        $attrid  = !empty($postdata['attrid'])?$postdata['attrid']:'';
-        $count   = !empty($postdata['count']) ?$postdata['count']:1;
-        $cartobj = new CartModel;
-        $usercart = $cartobj->selectInfo('userid',$userid);
-        foreach ($usercart as $key => $value) {
-            if ($value['goodsid'] ==$goodsid && $value['attrid']==$attrid) {
-                $tmpcount = 0;
-                $tmpcount = $value['count'] - $count;
-                if ($tmpcount===0) {
-                    $result = $cartobj->dodelete('id',$value['id']);
-                }else{
-                    if ($tmpcount>0) {
-                        $result = $cartobj->updateField('id',$value['id'],'count',$tmpcount);
-                    }else{
-                        $error = 4;
-                        $msg = '删除数量大于原有数量';
-                        echoJson($error,$msg,$data);
-                    }
+        $goods_id = $post_data['goods_id'];
+        $attr_id  = !empty($post_data['attr_id'])?$post_data['attr_id']:'';
+        $count   = !empty($post_data['count']) ?$post_data['count']:1;
+        $cart_obj = new CartModel;
+        $user_cart = $cart_obj->selectInfo('user_id',$user_id);
+        foreach ($user_cart as $key => $value) {
+            if ($value['goods_id'] !=$goods_id || $value['attr_id']!=$attr_id) {
+                $error = 6;
+                $msg = '参数有误';
+                echoJson($error,$msg,$data);
+            }
+            $tmpcount = 0;
+            $tmpcount = $value['count'] - $count;
+            if ($tmpcount===0) {
+                $result = $cart_obj->dodelete('id',$value['id']);
+            }else{
+                if ($tmpcount<0) {
+                    $error = 4;
+                    $msg = '删除数量大于原有数量';
+                    echoJson($error,$msg,$data);
                 }
-                if (!$result) {
-                    $error = 5;
-                    $msg ='删除失败';
-                    echoJson($error,$msg,$data); 
-                }
-
-                $data =$goodobj-> getGoodsLists($userid);
+                $result = $cart_obj->updateField('id',$value['id'],'count',$tmpcount);
+            }
+            if (!$result) {
+                $error = 5;
+                $msg ='删除失败';
                 echoJson($error,$msg,$data); 
             }
+            $goods_obj = new GoodsModel;
+            $data =$goods_obj-> getGoodsLists($user_id);
+            echoJson($error,$msg,$data);
         }
-        $error = 6;
-        $msg = '参数有误';
-        echoJson($error,$msg,$data); 
     }
 
     public function cartClear(){
@@ -268,34 +267,34 @@ class Goods extends Controller
             echoJson($error,$msg,$data);
         }
 
-        $postdata = input('post.');
+        $post_data = input('post.');
 
-        if (empty($postdata['token'])) {
+        if (empty($post_data['token'])) {
             $error = 2;
             $msg = "token为空";
             echoJson($error,$msg,$data);
         }
-        $token =$postdata['token'];
+        $token =$post_data['token'];
         //判断token
-        $tokenobj = new TokenModel;
-        $result = $tokenobj->tokenChecked($token);
+        $token_obj = new TokenModel;
+        $result = $token_obj->tokenChecked($token);
         if (!$result) {
             $error = 3;
             $msg = 'token不存在或过期';
             echoJson($error,$msg,$data);
         }
-        $userid = $result['id'];
+        $user_id = $result['id'];
 
-        $cartobj = new CartModel;
-        $usercart = $cartobj->selectInfo('userid',$userid);
-        if (empty($usercart)) {
+        $cart_obj = new CartModel;
+        $user_cart = $cart_obj->selectInfo('user_id',$user_id);
+        if (empty($user_cart)) {
             $error = 4;
             $msg ='用户没有物品';
             echoJson($error,$msg,$data); 
         }
-        foreach ($usercart as $key => $value) {
+        foreach ($user_cart as $key => $value) {
 
-            $result = $cartobj->dodelete('id',$value['id']);
+            $result = $cart_obj->dodelete('id',$value['id']);
             if (!$result) {
                 $error = 5;
                 $msg ='删除失败';
@@ -307,7 +306,7 @@ class Goods extends Controller
         $msg = '参数有误';
         echoJson($error,$msg,$data);
     }
-    public function cartDetele(){
+    public function cartDelete(){
         $error = 0;
         $msg = '成功';
         $data = [];
@@ -317,37 +316,37 @@ class Goods extends Controller
             echoJson($error,$msg,$data);
         }
 
-        $postdata = input('post.');
+        $post_data = input('post.');
 
-        if (empty($postdata['goods_id'])||empty($postdata['token'])) {
+        if (empty($post_data['goods_id'])||empty($post_data['token'])) {
             $error = 2;
             $msg = "缺少必要参数";
             echoJson($error,$msg,$data);
         }
 
-        $token =$postdata['token'];
+        $token =$post_data['token'];
         //判断token
-        $tokenobj = new TokenModel;
-        $result = $tokenobj->tokenChecked($token);
+        $token_obj = new TokenModel;
+        $result = $token_obj->tokenChecked($token);
         if (!$result) {
             $error = 3;
             $msg = 'token不存在或过期';
             echoJson($error,$msg,$data);
         }
-        $userid = $result['id']; 
+        $user_id = $result['id']; 
         //post中物品id,属性id,count
-        $goodsid = $postdata['goods_id'];
-        $attrid  = !empty($postdata['attrid'])?$postdata['attrid']:'';
-        $cartobj = new CartModel;
-        $usercart = $cartobj->selectInfo('userid',$userid);
-        foreach ($usercart as $key => $value) {
-            if ($value['goodsid'] ==$goodsid && $value['attrid']==$attrid) {
-                $result = $cartobj->dodelete('id',$value['id']);
-                    if (!$result){
-                        $error = 4;
-                        $msg = '删除失败';
-                        echoJson($error,$msg,$data);
-                    }
+        $goods_id = $post_data['goods_id'];
+        $attr_id  = !empty($post_data['attr_id'])?$post_data['attr_id']:'';
+        $cart_obj = new CartModel;
+        $user_cart = $cart_obj->selectInfo('user_id',$user_id);
+        foreach ($user_cart as $key => $value) {
+            if ($value['goods_id'] ==$goods_id && $value['attr_id']==$attr_id) {
+                $result = $cart_obj->dodelete('id',$value['id']);
+                if (!$result){
+                    $error = 4;
+                    $msg = '删除失败';
+                    echoJson($error,$msg,$data);
+                }
                 echoJson($error,$msg,$data); 
             }
         }

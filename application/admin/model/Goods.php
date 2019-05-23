@@ -13,48 +13,48 @@ class Goods extends Base
 
     public function changelist($thelists){
         //读取tag
-        $tagobj = new Tag;
-        $taglists = $tagobj->getlists();
-        $taglists = get_key_value($taglists,"id");
-        foreach ($taglists as $key => $value) {
-            unset($taglists[$key]['id']);
+        $tag_obj = new Tag;
+        $tag_lists = $tag_obj->getlists();
+        $tag_lists = get_key_value($tag_lists,"id");
+        foreach ($tag_lists as $key => $value) {
+            unset($tag_lists[$key]['id']);
         }
         foreach($thelists as $key => $value) {
-            $tagid = explode(',', $value['tag']);
-            $tmptag  =[];
-            foreach ($tagid as $k => $v) {
-                $tmptag[]=$taglists[$v];
+            $tag_id = explode(',', $value['tag']);
+            $tam_tag  =[];
+            foreach ($tag_id as $k => $v) {
+                $tam_tag[]=$tag_lists[$v];
             }
-            $thelists[$key]['tag'] = $tmptag;
+            $thelists[$key]['tag'] = $tam_tag;
         }
         //读取attr
-        $attrobj = new AttrModel;
-        $attrlists = $attrobj->getlists();
-        $attrlists = get_key_value($attrlists,"id");
+        $attr_obj = new AttrModel;
+        $attr_lists = $attr_obj->getlists();
+        $attr_lists = get_key_value($attr_lists,"id");
         foreach($thelists as $key => $value) {
-            $attrid = explode(',', $value['attrid']);
-            $tmptag  =[];
-            foreach ($attrid as $k => $v) {
-                $tmpattr[]=$attrlists[$v];
+            $attr_id = explode(',', $value['attr_id']);
+            $tam_tag  =[];
+            foreach ($attr_id as $k => $v) {
+                $tmp_tag[]=$attr_lists[$v];
             }
-            $thelists[$key]['attr'] = $tmpattr;
+            $thelists[$key]['attr'] = $tmp_tag;
         }
         return $thelists;
     }
 
     public function changeInfo($info){
-        $tagobj = new Tag;
-        $taglists = $tagobj->getlists();
-        $taglists = get_key_value($taglists,"id");
-        foreach ($taglists as $key => $value) {
-            unset($taglists[$key]['id']);
+        $tag_obj = new Tag;
+        $tag_lists = $tag_obj->getlists();
+        $tag_lists = get_key_value($tag_lists,"id");
+        foreach ($tag_lists as $key => $value) {
+            unset($tag_lists[$key]['id']);
         }
-        $tagid = explode(',', $info['tag']);
-        $tmptag  =[];
-        foreach ($tagid as $k => $v) {
-            $tmptag[]=$taglists[$v];
+        $tag_id = explode(',', $info['tag']);
+        $tam_tag  =[];
+        foreach ($tag_id as $k => $v) {
+            $tam_tag[]=$tag_lists[$v];
         }
-        $info['tag'] = $tmptag;
+        $info['tag'] = $tam_tag;
         return $info;        
     }
     public function formatGood($info){

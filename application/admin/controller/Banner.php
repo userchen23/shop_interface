@@ -19,7 +19,7 @@ class Banner extends Controller
     }
     public function save(){
         $data=input('post.');
-        if (!$data) {
+        if (empty($data)) {
             $this->error('未获取到数据');
         }
         $time = time();
@@ -76,7 +76,7 @@ class Banner extends Controller
 
     public function doUpdate(){
         $data=input('post.');
-        if (!$data) {
+        if (empty($data)) {
             $this->error('未获取到数据');
         }
         $time = time();
@@ -90,7 +90,6 @@ class Banner extends Controller
         if ($img=\tool\FileHandle::uploadImg('img','banner')) {
             $end['img']= 'http://shop.com/'. $img['saveName'];
         }
-
         $banner_obj = new BannerModel;
         $result     = $banner_obj->doupdate($id,$end);
 

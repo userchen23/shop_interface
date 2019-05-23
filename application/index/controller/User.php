@@ -26,8 +26,8 @@ class User extends Controller
             $msg = 'tonken为空';
             echoJson($error,$msg,$data);
         }
-        $tokenobj = new UserToken;
-        $result = $tokenobj->tokenChecked($token);
+        $token_obj = new UserToken;
+        $result = $token_obj->tokenChecked($token);
         if (!$result) {
             $error = 3;
             $msg = 'token不存在或过期';
@@ -50,8 +50,8 @@ class User extends Controller
             echoJson($error,$msg,$data);
         }
 
-        $tokenobj = new UserToken;
-        $result = $tokenobj->tokenChecked($token);
+        $token_obj = new UserToken;
+        $result = $token_obj->tokenChecked($token);
 
         if (!$result) {
             $error = 2;
@@ -61,7 +61,7 @@ class User extends Controller
 
         $info = [
             "id"=>!empty($result['id'])?$result['id']:'',
-            "username"=>!empty($result['username'])?$result['username']:'',
+            "user_name"=>!empty($result['user_name'])?$result['user_name']:'',
             "phone"=>!empty($result['phone'])?$result['phone']:'',
         ];
         $data = [
@@ -94,11 +94,11 @@ class User extends Controller
             echoJson($error,$msg,$data);
         }
         $data = [
-            "name"=>$info['username'],
+            "name"=>$info['user_name'],
             "id"=>$info['id'],
         ];
-        $tokenobj= new UserToken;
-        $token =$tokenobj-> getUserToken($data);
+        $token_obj= new UserToken;
+        $token =$token_obj-> getUserToken($data);
         if (!$token) {
             $error=4;
             $msg = "token存入失败";
@@ -124,8 +124,8 @@ class User extends Controller
             $msg = 'tonken为空';
             echoJson($error,$msg,$data);
         }
-        $tokenobj = new UserToken;
-        $result = $tokenobj->tokenClear($token);
+        $token_obj = new UserToken;
+        $result = $token_obj->tokenClear($token);
         if (!$result) {
             $error = 3;
             $msg = '失败';
@@ -143,35 +143,35 @@ class User extends Controller
             $msg = '未接受到POST请求';
             echoJson($error,$msg,$data);
         }
-        $postdata = input('post.');
-        if (empty($postdata)) {
+        $post_data = input('post.');
+        if (empty($post_data)) {
             $error = 2;
             $msg = 'data为空';
             echoJson($error,$msg,$data);
         }
-        if (empty($postdata['username'])||empty($postdata['phone'])||empty($postdata['password'])) {
+        if (empty($post_data['user_name'])||empty($post_data['phone'])||empty($post_data['password'])) {
             $error = 3;
             $msg = "用户名、电话、密码不能为空";
             echoJson($error,$msg,$data);
         }
-        if (!is_numeric($postdata['phone'])||strlen($postdata['phone'])!=11) {
+        if (!is_numeric($post_data['phone'])||strlen($post_data['phone'])!=11) {
             $error = 5;
             $msg   = "电话不符合规范";
             echoJson($error,$msg,$data);
         }
-        $postdata2 = [
-            "username" =>$postdata['username'],
-            "phone"=>$postdata['phone'],
-            "password"=>$postdata['password'],
+        $post_data2 = [
+            "user_name" =>$post_data['user_name'],
+            "phone"=>$post_data['phone'],
+            "password"=>$post_data['password'],
         ];
-        $userobj = new Usermodel;
-        $info = $userobj->findByPhone($postdata2['phone']);
+        $user_obj = new Usermodel;
+        $info = $user_obj->findByPhone($post_data2['phone']);
         if(!empty($info)) {
             $error = 4;
             $msg = "电话已被注册";
             echoJson($error,$msg,$data);
         }
-        $result =$userobj-> register($postdata2);
+        $result =$user_obj-> register($post_data2);
         $msg ="注册成功";  
         echoJson($error,$msg,$data);
     }

@@ -22,11 +22,12 @@
         <table  class="table table-striped"> 
             <tr>
                 <td>id</td>
-                <td>attrtype</td>
-                <td>attrname</td>
+                <td>attr_type</td>
+                <td>attr_name</td>
                 <td>pic</td>
+                <td>handle</td>
             </tr>
-            {volist name="attrlists" id="vo"}
+            {volist name="attr_lists" id="vo"}
             <tr>
                 <td>{$vo.id}</td>
                 <td>{$vo.attr_type}</td>
@@ -35,11 +36,15 @@
                         <img src="{$vo.pic}" width="50">
                     {else /} 无图片
                     {/if}</td>
+                <td>
+                    <a  class="btn btn-default" href="{:url('attr/update')}?&id={$vo.id}">修改</a><br>
+                    <a class="btn btn-default"  href="{:url('attr/delete')}?id={$vo.id}">删除</a>
+                </td>
             </tr>
             <input type="text" name="attr_arr[]" value={$vo.id} hidden="hidden"><br>
             {/volist}
         </table>
-        <input type="text" name="goods_id" value={$goodsid} hidden="hidden"><br>
+        <input type="text" name="goods_id" value={$goods_id} hidden="hidden"><br>
     </div>
     <input type="submit" name="" value="添加商品属性" class="btn btn-default">
 </form>

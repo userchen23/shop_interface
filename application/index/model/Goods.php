@@ -13,36 +13,36 @@ class Goods extends Base
     public $table = "goods";
 
     public function changelist($thelists){
-        $tagobj = new Tag;
-        $taglists = $tagobj->getlists();
-        $taglists = get_key_value($taglists,"id");
-        foreach ($taglists as $key => $value) {
-            unset($taglists[$key]['id']);
+        $tag_obj = new Tag;
+        $tag_lists = $tag_obj->getlists();
+        $tag_lists = get_key_value($tag_lists,"id");
+        foreach ($tag_lists as $key => $value) {
+            unset($tag_lists[$key]['id']);
         }
         foreach($thelists as $key => $value) {
-            $tagid = explode(',', $value['tag']);
-            $tmptag  =[];
-            foreach ($tagid as $k => $v) {
-                $tmptag[]=$taglists[$v];
+            $tag_id = explode(',', $value['tag']);
+            $tmp_tag  =[];
+            foreach ($tag_id as $k => $v) {
+                $tmp_tag[]=$tag_lists[$v];
             }
-            $thelists[$key]['tag'] = $tmptag;
+            $thelists[$key]['tag'] = $tmp_tag;
         }
         return $thelists;
     }
 
     public function changeInfo($info){
-        $tagobj = new Tag;
-        $taglists = $tagobj->getlists();
-        $taglists = get_key_value($taglists,"id");
-        foreach ($taglists as $key => $value) {
-            unset($taglists[$key]['id']);
+        $tag_obj = new Tag;
+        $tag_lists = $tag_obj->getlists();
+        $tag_lists = get_key_value($tag_lists,"id");
+        foreach ($tag_lists as $key => $value) {
+            unset($tag_lists[$key]['id']);
         }
-        $tagid = explode(',', $info['tag']);
-        $tmptag  =[];
-        foreach ($tagid as $k => $v) {
-            $tmptag[]=$taglists[$v];
+        $tag_id = explode(',', $info['tag']);
+        $tmp_tag  =[];
+        foreach ($tag_id as $k => $v) {
+            $tmp_tag[]=$tag_lists[$v];
         }
-        $info['tag'] = $tmptag;
+        $info['tag'] = $tmp_tag;
         return $info;        
     }
     public function formatGood($info){
@@ -77,27 +77,27 @@ class Goods extends Base
         }
         return $result;
     }
-    public function getGoodsLists($userid){
+    public function getGoodsLists($user_id){
                 ///todo
         ///
         $data = [];
-        $cartobj = new CartModel;
-        $usercart = $cartobj->selectInfo('userid',$userid);
+        $cart_obj = new CartModel;
+        $user_cart = $cart_obj->selectInfo('user_id',$user_id);
         $cart = [];
-        $attrobj = new AttrModel;
+        $attr_obj = new AttrModel;
 
-        foreach ($usercart as $key => $value) {
-            $goodsinfo = self::getInfo('id',$value['goodsid']);
-            $goodsname = $goodsinfo['name'];
-            $attrinfo  = $attrobj-> getInfo('id',$value['attrid']);
+        foreach ($user_cart as $key => $value) {
+            $goods_info = self::getInfo('id',$value['goods_id']);
+            $goods_name = $goods_info['name'];
+            $attr_info  = $attr_obj-> getInfo('id',$value['attr_id']);
             $cart[]=[
-                'name' => $goodsname,
-                'price'=> $goodsinfo['price']/100,
+                'name' => $goods_name,
+                'price'=> $goods_info['price']/100,
                 'count'=> $value['count'],
-                'attrid'=>$value['attrid'],
-                'attrtype'=>$attrinfo['attr_type'],
-                'attrname'=> $attrinfo['attr_name'],
-                'pic'  => $attrinfo['pic'],
+                'attr_id'=>$value['attr_id'],
+                'attr_type'=>$attr_info['attr_type'],
+                'attr_name'=> $attr_info['attr_name'],
+                'pic'  => $attr_info['pic'],
             ];
         }
         $data['cart'] =$cart;

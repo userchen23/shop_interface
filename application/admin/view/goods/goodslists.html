@@ -27,15 +27,15 @@
         <td>pro</td>
         <td>img</td>
         <td>price</td>
-        <td>tagid</td>
+        <td>tag_id</td>
         <td>content</td>
         <td>handle</td>
     </tr>
-    {volist name="goodslists" id="vo"}
+    {volist name="goods_lists" id="vo"}
     <tr>
         <td>{$vo.id}</td>
         <td>{$vo.name}</td>
-        <td><a href="{:url('goods/attrInfo')}?&goodsid={$vo.id}">点击查看</a></td>
+        <td><a href="{:url('goods/attrInfo')}?&goods_id={$vo.id}">点击查看</a></td>
         <td>{$vo.pro}</td>    
         <td>{if condition="$vo['img'] neq ''"}
                 <img src="http://shop.com/{$vo.img}" width="50">
