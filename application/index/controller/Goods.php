@@ -234,27 +234,35 @@ class Goods extends Controller
                 $msg = '参数有误';
                 echoJson($error,$msg,$data);
             }
-            $tmpcount = 0;
-            $tmpcount = $value['count'] - $count;
-            if ($tmpcount===0) {
-                $result = $cart_obj->dodelete('id',$value['id']);
+            if ($value['attr_id']!=$attr_id) {
+                continue;
             }else{
-                if ($tmpcount<0) {
-                    $error = 4;
-                    $msg = '删除数量大于原有数量';
-                    echoJson($error,$msg,$data);
+                $tmpcount = 0;
+                $tmpcount = $value['count'] - $count;
+                if ($tmpcount===0) {
+                    $result = $cart_obj->dodelete('id',$value['id']);
+                }else{
+                    if ($tmpcount<0) {
+                        $error = 4;
+                        $msg = '删除数量大于原有数量';
+                        echoJson($error,$msg,$data);die;
+                    }
+                    $result = $cart_obj->updateField('id',$value['id'],'count',$tmpcount);
                 }
-                $result = $cart_obj->updateField('id',$value['id'],'count',$tmpcount);
-            }
-            if (!$result) {
-                $error = 5;
-                $msg ='删除失败';
-                echoJson($error,$msg,$data); 
-            }
-            $goods_obj = new GoodsModel;
-            $data =$goods_obj-> getGoodsLists($user_id);
-            echoJson($error,$msg,$data);
+                if (!$result) {
+                    $error = 5;
+                    $msg ='删除失败';
+                    echoJson($error,$msg,$data);die; 
+                }
+                $goods_obj = new GoodsModel;
+                $data =$goods_obj-> getGoodsLists($user_id);
+                echoJson($error,$msg,$data);die;  
+            } 
+
         }
+        $error = 7;
+        $msg    = '参数有误';
+        echoJson($error,$msg,$data);die();
     }
 
     public function cartClear(){
